@@ -219,7 +219,7 @@ function render() {
 		sphereBody.velocity.y,
 		0
 	);
-	rotationAmount += ballVelocity.length() / (Math.PI * 10);
+	rotationAmount += ballVelocity.length() / (Math.PI * 60);
 	sphereBody.quaternion.setFromAxisAngle(ballRotationAxis, rotationAmount);
 	// Problem: Axis based on perpendicular to player, which means if the player is moving in a different direction than the velocity, the texture messes up
 	// Problem: Due to the rotationAmount being saved and the axis being dependent on player angle, the texture will mess up when the ball doesnt move but the player does
