@@ -56,7 +56,6 @@ const velocityMax = 15;
 let playerAngleFromBall = 0;
 let rotationAmount = 0;
 var ballCircumference = Math.PI * ballSize * 2;
-var ballRotationAxis = new THREE.Vector3(0, 0, 1);
 
 var world = new CANNON.World();
 world.gravity.set(0, 0, 0);
@@ -209,13 +208,23 @@ function render() {
 		}
 	}
 
-	var ballVelocity = new THREE.Vector3();
-	ballVelocity.set(
-		sphereBody.position.x * 0.5,
-		sphereBody.position.y * 0.5,
-		10
+	var ballRotationAxis = new THREE.Vector3(
+		Math.cos(playerAngleFromBall - Math.PI / 2),
+		Math.sin(playerAngleFromBall - Math.PI / 2),
+		0
 	);
-	sphereBody.quaternion.setFromEuler(-ballVelocity.y, ballVelocity.x, 0, 'XYZ');
+	ballRotationAxis.normalize();
+	var ballVelocity = new THREE.Vector3(
+		sphereBody.velocity.x,
+		sphereBody.velocity.y,
+		0
+	);
+	rotationAmount += ballVelocity.length() / (Math.PI * 10);
+	sphereBody.quaternion.setFromAxisAngle(ballRotationAxis, rotationAmount);
+	// Problem: Axis based on perpendicular to player, which means if the player is moving in a different direction than the velocity, the texture messes up
+	// Problem: Due to the rotationAmount being saved and the axis being dependent on player angle, the texture will mess up when the ball doesnt move but the player does
+
+	console.log(ballVelocity.length());
 
 	// Keeping physics object in the same position as the mesh
 	sphereMesh.position.copy(sphereBody.position);
